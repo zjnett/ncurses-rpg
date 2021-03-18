@@ -3,6 +3,7 @@
 
 #include "rpg.h"
 #include "window.h"
+#include "menu.h"
 
 int do_game_loop(window_info *wi);
 int update_buffer(char *buffer, char *src, int *buffer_length);
