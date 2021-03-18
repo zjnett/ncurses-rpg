@@ -24,18 +24,16 @@ int do_game_loop(window_info *wi) {
     char buffer[MAX_SIZE] = { '\0' };
     int buf_len = 0;
 
-    int random = 15;
-
     do {
         clear();
 
         switch(mode) {
             case MAIN_MENU:
                 // render main menu
-                random = rand() % 1000;
-                sprintf(buffer, "Main menu! %d", random);
-                update_buffer(buffer, buffer, &buf_len);
-                mvaddstr(wi->center_rows, wi->center_cols - buf_len, buffer);
+                //sprintf(buffer, "Main menu!");
+                //update_buffer(buffer, buffer, &buf_len);
+                //mvaddstr(wi->center_rows, wi->center_cols - buf_len, buffer);
+                render_main_menu(wi);
                 break;
 
             case GAMEPLAY:
