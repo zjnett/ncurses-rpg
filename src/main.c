@@ -1,6 +1,27 @@
 #include "game/rpg.h"
+#include "game/game.h"
+#include "game/window.h"
 
-int main(int argc, char *argv[]) {
-    printf("Hello world!\n");
-    return 0;
+enum game_mode mode;
+
+int main(int argc, char *argv[])
+{
+
+    srand(time(NULL));
+
+    // initialize ncurses
+    initscr();
+    cbreak();
+    noecho();
+
+    // initialize window info
+    window_info wi;
+    init_window_info(&wi);
+
+    mode = MAIN_MENU;
+
+    int exit_condition = do_game_loop(&wi);
+
+    exit(exit_condition);
+
 }
