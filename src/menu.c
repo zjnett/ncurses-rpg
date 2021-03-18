@@ -3,8 +3,8 @@
 extern menu_option menu_options[100];
 extern int num_main_menu_options;
 
-void init_main_menu_options(void) {
-    create_menu_option(&menu_options[0], "New Game", NULL, 0);
+void init_main_menu_options(void (*ptr[])()) {
+    create_menu_option(&menu_options[0], "New Game", ptr[0], 0);
     create_menu_option(&menu_options[1], "Load Game", NULL, 0);
     create_menu_option(&menu_options[2], "Quit", NULL, 0);
     num_main_menu_options = 3;

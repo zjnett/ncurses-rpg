@@ -13,7 +13,7 @@ typedef struct _menu_option {
 
 #define init_menu_option(x) menu_option x = {.name={ '\0' }, .ptr = NULL, .name_length = 0, .is_selected = 0 };
 
-void init_main_menu_options(void);
+void init_main_menu_options(void (*ptr[])());
 
 void create_menu_option(menu_option *m, char *name, void *ptr, int is_selected);
 

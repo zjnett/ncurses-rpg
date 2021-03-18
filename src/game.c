@@ -1,7 +1,5 @@
 #include "game/game.h"
 
-extern enum game_mode mode;
-
 /*
         RENDER LAYERS:
 
@@ -20,18 +18,22 @@ extern enum game_mode mode;
 
 int do_game_loop(window_info *wi) {
     
-    char input = '\0';
+    int input = '\0';
     char buffer[MAX_SIZE] = { '\0' };
     int buf_len = 0;
     int selected_option = 0;
 
+    // function pointers
+    void (*func_ptr_array[3])() = { exec_new_game, NULL, NULL };
+
     do {
         clear();
+        //mvprintw(0, 0, "mode is: %d", mode);
 
         switch(mode) {
             case MAIN_MENU:
                 // render main menu
-                init_main_menu_options();
+                init_main_menu_options(func_ptr_array);
                 select_menu_option(selected_option);
                 render_main_menu(wi);
                 break;
@@ -61,18 +63,24 @@ int do_game_loop(window_info *wi) {
             case '3':
                 mode = MENU;
                 break;
-            case 'w': // up arrow?
-                if (selected_option == 0)
-                    selected_option = 2;
-                else
-                    selected_option--;
-                break;
-            case 's': // down arrow?
-                if (selected_option == 2)
-                    selected_option = 0;
-                else
-                    selected_option++;
-                break;
+        }
+
+        if (input == KEY_UP) {
+            if (selected_option == 0)
+                selected_option = 2;
+            else
+                selected_option--;
+        } else if (input == KEY_DOWN) {
+            if (selected_option == 2)
+                selected_option = 0;
+            else
+                selected_option++;
+        } else if (input == 10) { // ENTER, since KEY_ENTER is for the numpad
+            if (selected_option == 2) {
+                input = 'q';
+                continue;
+            }  
+            func_ptr_array[selected_option]();
         }
 
     } while(input != 'q');
@@ -90,4 +98,8 @@ int update_buffer(char *buffer, char *src, int *buffer_length) {
         return 0;
     }
     return 1;
+}
+
+void exec_new_game() {
+    mode = GAMEPLAY;
 }
