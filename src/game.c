@@ -33,6 +33,7 @@ int do_game_loop(window_info *wi) {
                 //sprintf(buffer, "Main menu!");
                 //update_buffer(buffer, buffer, &buf_len);
                 //mvaddstr(wi->center_rows, wi->center_cols - buf_len, buffer);
+                init_main_menu_options();
                 render_main_menu(wi);
                 break;
 
