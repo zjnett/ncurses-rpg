@@ -42,18 +42,31 @@ int do_game_loop(window_info *wi) {
 
             case GAMEPLAY:
                 // render gameplay
-                update_buffer(buffer, "Game menu!", &buf_len);
-                mvaddstr(wi->center_rows - buf_len, wi->center_cols, buffer);
+                update_buffer(buffer, "Gameplay!", &buf_len);
+                mvaddstr(wi->center_rows, wi->center_cols - buf_len, buffer);
                 break;
 
             case MENU:
                 // render a game menu
                 update_buffer(buffer, "Menu!", &buf_len);
-                mvaddstr(wi->center_rows - buf_len, wi->center_cols, buffer);
+                mvaddstr(wi->center_rows, wi->center_cols - buf_len, buffer);
                 break;
         }
 
         input = getch();
+
+        switch(input) {
+            case '1':
+                mode = MAIN_MENU;
+                break;
+            case '2':
+                mode = GAMEPLAY;
+                break;
+            case '3':
+                mode = MENU;
+                break;
+        }
+
     } while(input != 'q');
 
     endwin();
@@ -63,7 +76,7 @@ int do_game_loop(window_info *wi) {
 int update_buffer(char *buffer, char *src, int *buffer_length) {
     int n = strlen(src);
     if (n < MAX_SIZE) {
-        strncpy(buffer, src, n);
+        strncpy(buffer, src, n+1);
         *buffer_length = strlen(buffer);
         return 0;
     }
