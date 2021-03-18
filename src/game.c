@@ -34,9 +34,7 @@ int do_game_loop(window_info *wi) {
                 // render main menu
                 random = rand() % 1000;
                 sprintf(buffer, "Main menu! %d", random);
-                //update_buffer(buffer, buffer, &buf_len);
-                buf_len = strlen(buffer);
-                fprintf(stderr, "%s", buffer);
+                update_buffer(buffer, buffer, &buf_len);
                 mvaddstr(wi->center_rows, wi->center_cols - buf_len, buffer);
                 break;
 
@@ -76,7 +74,8 @@ int do_game_loop(window_info *wi) {
 int update_buffer(char *buffer, char *src, int *buffer_length) {
     int n = strlen(src);
     if (n < MAX_SIZE) {
-        strncpy(buffer, src, n+1);
+        if (strcmp(buffer, src)) // only copy if buffer != src
+            strncpy(buffer, src, n+1);
         *buffer_length = strlen(buffer);
         return 0;
     }
