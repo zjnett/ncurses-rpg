@@ -13,6 +13,9 @@ int main(int argc, char *argv[])
     initscr();
     cbreak();
     noecho();
+    start_color();
+    init_pair(1, COLOR_WHITE, COLOR_BLACK);
+    init_pair(2, COLOR_YELLOW, COLOR_BLACK);
 
     // initialize window info
     window_info wi;

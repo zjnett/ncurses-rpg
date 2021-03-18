@@ -23,6 +23,7 @@ int do_game_loop(window_info *wi) {
     char input = '\0';
     char buffer[MAX_SIZE] = { '\0' };
     int buf_len = 0;
+    int selected_option = 0;
 
     do {
         clear();
@@ -30,10 +31,8 @@ int do_game_loop(window_info *wi) {
         switch(mode) {
             case MAIN_MENU:
                 // render main menu
-                //sprintf(buffer, "Main menu!");
-                //update_buffer(buffer, buffer, &buf_len);
-                //mvaddstr(wi->center_rows, wi->center_cols - buf_len, buffer);
                 init_main_menu_options();
+                select_menu_option(selected_option);
                 render_main_menu(wi);
                 break;
 
@@ -61,6 +60,18 @@ int do_game_loop(window_info *wi) {
                 break;
             case '3':
                 mode = MENU;
+                break;
+            case 'w': // up arrow?
+                if (selected_option == 0)
+                    selected_option = 2;
+                else
+                    selected_option--;
+                break;
+            case 's': // down arrow?
+                if (selected_option == 2)
+                    selected_option = 0;
+                else
+                    selected_option++;
                 break;
         }
 
