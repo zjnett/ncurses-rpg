@@ -63,24 +63,25 @@ int do_game_loop(window_info *wi) {
             case '3':
                 mode = MENU;
                 break;
-        }
-
-        if (input == KEY_UP) {
-            if (selected_option == 0)
-                selected_option = 2;
-            else
-                selected_option--;
-        } else if (input == KEY_DOWN) {
-            if (selected_option == 2)
-                selected_option = 0;
-            else
-                selected_option++;
-        } else if (input == 10) { // ENTER, since KEY_ENTER is for the numpad
-            if (selected_option == 2) {
-                input = 'q';
-                continue;
-            }  
-            func_ptr_array[selected_option]();
+            case KEY_UP:
+                if (selected_option == 0)
+                    selected_option = 2;
+                else
+                    selected_option--;
+                break;
+            case KEY_DOWN:
+                if (selected_option == 2)
+                    selected_option = 0;
+                else
+                    selected_option++;
+                break;
+            case 10: // enter
+                if (selected_option == 2) {
+                    input = 'q';
+                    continue;
+                }  
+                func_ptr_array[selected_option]();
+                break;
         }
 
     } while(input != 'q');
