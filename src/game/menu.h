@@ -6,7 +6,7 @@
 
 typedef struct _menu_option {
     char name[100];
-    void *ptr;
+    void (*ptr)();
     int name_length;
     int is_selected;
 } menu_option;
@@ -23,7 +23,10 @@ void select_menu_option(int num);
 // http://patorjk.com/software/taag/
 void render_main_menu(window_info *wi);
 
+void process_menu_input(int input, int *selected_option);
+
 // global menu options array
+extern enum game_mode mode;
 menu_option menu_options[100];
 int num_main_menu_options;
 
