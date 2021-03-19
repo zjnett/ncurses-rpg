@@ -7,8 +7,8 @@ extern int num_main_menu_options;
 void init_main_menu_options(void (*ptr[])())
 {
     create_menu_option(&menu_options[0], "New Game", ptr[0], 0);
-    create_menu_option(&menu_options[1], "Load Game", NULL, 0);
-    create_menu_option(&menu_options[2], "Quit", NULL, 0);
+    create_menu_option(&menu_options[1], "Load Game", ptr[1], 0);
+    create_menu_option(&menu_options[2], "Quit", ptr[2], 0);
     num_main_menu_options = 3;
 }
 
@@ -71,15 +71,6 @@ void process_menu_input(int input, int *selected_option)
 {
     switch (input)
     {
-    case '1':
-        mode = MAIN_MENU;
-        break;
-    case '2':
-        mode = GAMEPLAY;
-        break;
-    case '3':
-        mode = MENU;
-        break;
     case KEY_UP:
         if (*selected_option == 0)
             *selected_option = 2;
@@ -93,13 +84,15 @@ void process_menu_input(int input, int *selected_option)
             (*selected_option)++;
         break;
     case 10: // enter
-        /* if (*selected_option == 2)
-        {
-            input = 'q';
-            continue;
-        }*/ // figure out a better way to exit
         menu_options[*selected_option].ptr();
-        //func_ptr_array[selected_option]();
         break;
     }
+}
+
+void render_character_creation_menu() {
+
+}
+
+void render_dialogue_menu() {
+
 }

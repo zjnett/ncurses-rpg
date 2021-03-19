@@ -25,7 +25,7 @@ int do_game_loop(window_info *wi)
     int selected_option = 0;
 
     // function pointers
-    void (*func_ptr_array[3])() = {exec_new_game, NULL, NULL};
+    void (*func_ptr_array[3])() = {exec_new_game, exec_load_game, exec_exit };
 
     do
     {
@@ -52,13 +52,17 @@ int do_game_loop(window_info *wi)
             update_buffer(buffer, "Menu!", &buf_len);
             mvaddstr(wi->center_rows, wi->center_cols - buf_len, buffer);
             break;
+
+        case EXIT:
+            // render a goodbye screen?
+            break;
         }
 
         input = getch();
 
         process_menu_input(input, &selected_option);
 
-    } while (input != 'q');
+    } while (input != 'q' && mode != EXIT);
 
     endwin();
     return EXIT_SUCCESS;
@@ -80,4 +84,13 @@ int update_buffer(char *buffer, char *src, int *buffer_length)
 void exec_new_game()
 {
     mode = GAMEPLAY;
+}
+
+void exec_load_game()
+{
+    mode = MENU;
+}
+
+void exec_exit() {
+    mode = EXIT;
 }

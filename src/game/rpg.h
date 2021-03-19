@@ -16,7 +16,8 @@
 typedef enum game_mode {
     MAIN_MENU,
     GAMEPLAY,
-    MENU
+    MENU,
+    EXIT
 } game_mode;
 
 #endif
