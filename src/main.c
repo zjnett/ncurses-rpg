@@ -15,9 +15,16 @@ int main(int argc, char *argv[])
     noecho();
     keypad(stdscr, true);
 
+    // TODO: segregate color logic into its own function
+    // TODO: make descriptive preprocessor constants for color pairings
     start_color();
-    init_pair(1, COLOR_WHITE, COLOR_BLACK);
-    init_pair(2, COLOR_YELLOW, COLOR_BLACK);
+    init_pair(1, COLOR_BLUE, COLOR_BLACK);
+    init_pair(2, COLOR_GREEN, COLOR_BLACK);
+    init_pair(3, COLOR_CYAN, COLOR_BLACK);
+    init_pair(4, COLOR_RED, COLOR_BLACK);
+    init_pair(5, COLOR_MAGENTA, COLOR_BLACK);
+    init_pair(6, COLOR_YELLOW, COLOR_BLACK);
+    init_pair(7, COLOR_WHITE, COLOR_BLACK);
 
     // initialize window info
     window_info wi;

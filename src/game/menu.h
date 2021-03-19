@@ -3,6 +3,7 @@
 
 #include "rpg.h"
 #include "window.h"
+#include "character.h"
 
 typedef struct _menu_option {
     char name[100];
@@ -25,9 +26,17 @@ void render_main_menu(window_info *wi);
 
 void process_menu_input(int input, int *selected_option);
 
+void init_character_creation_options(void);
+
+void select_cc_menu_option(int selected_field);
+
+void render_character_creation_menu(window_info *wi, int selected_option, character *pc);
+
 // global menu options array
 extern enum game_mode mode;
 menu_option menu_options[100];
 int num_main_menu_options;
+menu_option character_creation_options[100];
+int num_cc_options;
 
 #endif

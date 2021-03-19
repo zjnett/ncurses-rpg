@@ -36,6 +36,7 @@ int do_game_loop(window_info *wi)
         {
         case MAIN_MENU:
             // render main menu
+            // FIXME: should not init menu options every time, but also reset is_selected values of menu members
             init_main_menu_options(func_ptr_array);
             select_menu_option(selected_option);
             render_main_menu(wi);
@@ -43,8 +44,10 @@ int do_game_loop(window_info *wi)
 
         case GAMEPLAY:
             // render gameplay
-            update_buffer(buffer, "Gameplay!", &buf_len);
-            mvaddstr(wi->center_rows, wi->center_cols - buf_len, buffer);
+            //update_buffer(buffer, "Gameplay!", &buf_len);
+            //mvaddstr(wi->center_rows, wi->center_cols - buf_len, buffer);
+            init_character_creation_options();
+            character_creation_loop(wi);
             break;
 
         case MENU:
@@ -66,6 +69,40 @@ int do_game_loop(window_info *wi)
 
     endwin();
     return EXIT_SUCCESS;
+}
+
+void character_creation_loop(window_info *wi) {
+    int character_creation_completed = 0, selected_field = 0;
+    int input = 0;
+    character new_player_character;
+    do {
+        clear();
+
+        select_cc_menu_option(selected_field);
+        render_character_creation_menu(wi, selected_field, &new_player_character);
+
+        input = getch();
+
+        switch(input) {
+            case KEY_UP:
+                if (selected_field == 0)
+                    selected_field = num_cc_options - 1;
+                else
+                    selected_field--;
+                break;
+            case KEY_DOWN:
+                if (selected_field == num_cc_options - 1)
+                    selected_field = 0;
+                else
+                    selected_field++;
+                break;
+        }
+
+    } while(!character_creation_completed);
+}
+
+void gameplay_render_loop() {
+
 }
 
 int update_buffer(char *buffer, char *src, int *buffer_length)

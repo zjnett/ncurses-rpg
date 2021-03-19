@@ -1,8 +1,10 @@
 #include "game/menu.h"
 
-
 extern menu_option menu_options[100];
 extern int num_main_menu_options;
+
+menu_option character_creation_options[100];
+int num_cc_options;
 
 void init_main_menu_options(void (*ptr[])())
 {
@@ -20,6 +22,7 @@ void create_menu_option(menu_option *m, char *name, void *ptr, int is_selected)
     m->is_selected = is_selected;
 }
 
+// TODO: change this to be 'main menu option'
 void select_menu_option(int num)
 {
     menu_options[num].is_selected = 1;
@@ -61,9 +64,9 @@ void render_main_menu(window_info *wi)
     for (int i = 0; i < num_main_menu_options; i++)
     {
         if (menu_options[i].is_selected)
-            attron(COLOR_PAIR(2));
+            attron(COLOR_PAIR(6));
         mvaddstr(wi->center_rows + h + i, wi->center_cols - (menu_options[i].name_length / 2), menu_options[i].name);
-        attroff(COLOR_PAIR(2)); // turn off color if used
+        attroff(COLOR_PAIR(6)); // turn off color if used
     }
 }
 
@@ -89,7 +92,32 @@ void process_menu_input(int input, int *selected_option)
     }
 }
 
-void render_character_creation_menu() {
+void init_character_creation_options(void) {
+    create_menu_option(&character_creation_options[0], "Name: ", NULL, 0);
+    create_menu_option(&character_creation_options[1], "Race: ", NULL, 0);
+    create_menu_option(&character_creation_options[2], "Class: ", NULL, 0);
+    num_cc_options = 3;
+}
+
+// maybe possible to toggle these on-off instead of systematically looping every game loop?
+void select_cc_menu_option(int selected_field) {
+    for (int i = 0; i < num_cc_options; i++) {
+        character_creation_options[i].is_selected = 0;
+    }
+    character_creation_options[selected_field].is_selected = 1;
+}
+
+void render_character_creation_menu(window_info *wi, int selected_option, character *pc) {
+    int initial_y = (wi->max_rows * 0.1), initial_x = (wi->max_cols * 0.1);
+    int x = initial_x, y = initial_y;
+    box(stdscr, '|', '-');
+
+    for (int i = 0; i < num_cc_options; i++) {
+        if (character_creation_options[i].is_selected)
+            attron(COLOR_PAIR(6));
+        mvaddstr(y + i, x, character_creation_options[i].name);
+        attroff(COLOR_PAIR(6));
+    }
 
 }
 
