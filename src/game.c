@@ -76,6 +76,10 @@ void character_creation_loop(window_info *wi) {
     int input = 0;
     character new_player_character;
     init_character(&new_player_character);
+
+    select_pc_race(&new_player_character, HUMAN);
+    select_pc_class(&new_player_character, WARRIOR);
+    
     do {
         wclear(stdscr);
 

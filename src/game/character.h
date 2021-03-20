@@ -9,6 +9,8 @@ static char *class_lookup[4] = { "WARRIOR", "WIZARD", "ROGUE", "RANGER" };
 // race name lookup table
 static char *race_lookup[4] = { "HUMAN", "ELF", "DWARF", "DEVIL" };
 
+static char *race_bonuses[4] = { "+2 CON, +1 WIS", "+2 DEX, +1 INT", "+2 STR, +1 CON", "+2 CHA, +1 DEX" };
+
 static int num_races = 4;
 
 static int num_classes = 4;
@@ -69,6 +71,13 @@ typedef struct _character {
     int wisdom;
     int charisma;
 
+    int str_mod;
+    int dex_mod;
+    int con_mod;
+    int int_mod;
+    int wis_mod;
+    int cha_mod;
+
     level level;
 
 } character;
@@ -78,6 +87,8 @@ static inline void init_character(character *c) {
 }
 
 void select_pc_race(character *pc, int race_option);
+void reset_pc_ability_scores(character *pc);
 void select_pc_class(character *pc, int class_option);
+void calculate_character_attributes(character *pc);
 
 #endif

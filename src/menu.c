@@ -121,9 +121,9 @@ void render_character_creation_menu(window_info *wi, int selected_option, charac
     attroff(A_BOLD);
 
     // update these test values to be actual character parameters
-    print_status_bar(y++, x, "HP", 4, 5, 20);
-    print_status_bar(y++, x, "SP", 2, 7, 15);
-    print_status_bar(y++, x, "MP", 1, 20, 30);
+    print_status_bar(y++, x, "HP", 4, pc->current_hp, pc->max_hp);
+    print_status_bar(y++, x, "SP", 2, pc->current_stamina, pc->max_stamina);
+    print_status_bar(y++, x, "MP", 1, pc->current_magic, pc->max_magic);
 
     y += vertical_padding; // move 3 rows down
 
@@ -253,8 +253,8 @@ void race_selection_window(window_info *wi, character *pc) {
     box(p, '|', '-');
 
     // Initial horizontal margin of 0.5%, paragraph margin of 2%, line break at 80% of max.
-    int initial_x_margin = (ceil(p_info.max_cols * 0.05)), initial_y_margin = (ceil(p_info.max_rows * 0.05)), 
-        para_margin = (p_info.max_cols * 0.2), line_break = (p_info.max_cols * 0.9);
+    int initial_x_margin = (ceil(p_info.max_cols * 0.05)), initial_y_margin = (ceil(p_info.max_rows * 0.1)), 
+        para_margin = (p_info.max_cols * 0.15), line_break = (p_info.max_cols * 0.9);
 
     int input = 0, race_option = pc->race.id;
     char dummy[10];
@@ -289,8 +289,16 @@ void race_selection_window(window_info *wi, character *pc) {
             x = initial_x_margin;
             if (race_option == i)
                 wattron(p, COLOR_PAIR(3));
-            mvwaddstr(p, y++, x, race_lookup[i]);
-            wattroff(p, COLOR_PAIR(3));
+            mvwaddstr(p, y, x, race_lookup[i]);
+            wattron(p, COLOR_PAIR(2));
+            wprintw(p, "\t\t%s", race_bonuses[i]);
+            wattroff(p, COLOR_PAIR(2));
+            y++;
+            // move x to paragraph margin
+            x = para_margin;
+            wmove(p, y, x);
+            if (race_option == i)
+                wattron(p, COLOR_PAIR(3));
             for (int j = 0; race_descriptions[j][i] != '\0'; j++) {
                 if (x > line_break && race_descriptions[j][i] == ' ') {
                     x = para_margin;          // reset x
@@ -298,9 +306,7 @@ void race_selection_window(window_info *wi, character *pc) {
                 }
                 mvwaddch(p, y, x++, race_descriptions[j][i]); // add character, then iterate x
             }
-            // move x to paragraph margin
-            x = para_margin;
-            wmove(p, y, x);
+            wattroff(p, COLOR_PAIR(3));
             y++;
         }
 
@@ -343,7 +349,7 @@ void class_selection_window(window_info *wi, character *pc) {
     box(p, '|', '-');
 
     // Initial horizontal margin of 0.5%, paragraph margin of 2%, line break at 80% of max.
-    int initial_x_margin = (ceil(p_info.max_cols * 0.05)), initial_y_margin = (ceil(p_info.max_rows * 0.05)), 
+    int initial_x_margin = (ceil(p_info.max_cols * 0.05)), initial_y_margin = (ceil(p_info.max_rows * 0.1)), 
         para_margin = (p_info.max_cols * 0.2), line_break = (p_info.max_cols * 0.9);
 
     int input = 0, class_option = pc->class.id;
