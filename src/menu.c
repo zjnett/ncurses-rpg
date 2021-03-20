@@ -232,5 +232,104 @@ int find_selected_cc_option(void) {
 void get_character_attribute(character *pc, int selected_option) {
     if (!strncmp(character_creation_options[selected_option].name, "Name", 4)) {
         gets_window(&wi, "name", pc->name);
+    } else if (!strncmp(character_creation_options[selected_option].name, "Race", 4)) {
+        race_selection_window(&wi, pc);
+    } else if (!strncmp(character_creation_options[selected_option].name, "Class", 5)) {
+        class_selection_window(&wi, pc);
     }
+}
+
+void race_selection_window(window_info *wi, character *pc) {
+
+    window_info p_info = { (wi->max_rows/1.5), (wi->max_cols/1.7), (wi->max_rows/1.5)/2, (wi->max_cols/1.7)/2 };
+    WINDOW *p = newwin(p_info.max_rows, p_info.max_cols, 
+                        wi->center_rows - (p_info.center_rows), 
+                        wi->center_cols - (p_info.center_cols));
+    PANEL *p_panel = new_panel(p);
+
+    keypad(p, true);
+    box(p, '|', '-');
+
+    // Initial horizontal margin of 0.5%, paragraph margin of 2%, line break at 80% of max.
+    int initial_x_margin = (ceil(p_info.max_cols * 0.05)), initial_y_margin = (ceil(p_info.max_rows * 0.05)), 
+        para_margin = (p_info.max_cols * 0.2), line_break = (p_info.max_cols * 0.9);
+
+    int input = 0, race_option = pc->race.id;
+    char dummy[10];
+
+    char race_descriptions[1000][4];
+
+    // read descriptions into array from file
+    // this is only done once to save on I/O
+    FILE *race_desc_file = fopen("../res/text/desc/races", "r");
+    if (race_desc_file != NULL) {
+        for (int i = 0; i < num_races; i++) {
+            // read in dummy string from file
+            fscanf(race_desc_file, "%s\n", dummy);
+            char cur = fgetc(race_desc_file);
+            int count = 0;
+            while (cur != '\n')
+            {
+                race_descriptions[count++][i] = cur;
+                cur = fgetc(race_desc_file);
+            }
+            race_descriptions[count][i] = '\0';
+        }
+        fclose(race_desc_file);
+    }
+
+    while (input != 10) { // not enter
+        int y = initial_y_margin, x = initial_x_margin;
+        update_panels();
+        // TODO: change so the only printed description is the selected option
+
+        for (int i = 0; i < num_races; i++) {
+            x = initial_x_margin;
+            if (race_option == i)
+                wattron(p, COLOR_PAIR(3));
+            mvwaddstr(p, y++, x, race_lookup[i]);
+            wattroff(p, COLOR_PAIR(3));
+            for (int j = 0; race_descriptions[j][i] != '\0'; j++) {
+                if (x > line_break && race_descriptions[j][i] == ' ') {
+                    x = para_margin;          // reset x
+                    wmove(p, ++y, x);         // add 1 to y, then move cursor
+                }
+                mvwaddch(p, y, x++, race_descriptions[j][i]); // add character, then iterate x
+            }
+            // move x to paragraph margin
+            x = para_margin;
+            wmove(p, y, x);
+            y++;
+        }
+
+        input = wgetch(p);
+
+        // TODO: refactor this menu switch statement? i feel like this is the third time
+        // probably can go in its own function with selected_option as an output parameter
+        switch(input) {
+        case KEY_UP:
+            if (race_option == 0)
+                race_option = num_races - 1;
+            else
+                race_option--;
+            break;
+        case KEY_DOWN:
+            if (race_option == num_races - 1)
+                race_option = 0;
+            else
+                race_option++;
+            break;
+        case 10: // enter
+            select_pc_race(pc, race_option);
+            continue;
+        }
+
+        doupdate();
+    }
+
+    
+}
+
+void class_selection_window(window_info *wi, character *pc) {
+
 }

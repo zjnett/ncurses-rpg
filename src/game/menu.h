@@ -40,6 +40,10 @@ void gets_window(window_info *wi, char *name, char *dest);
 
 void get_character_attribute(character *pc, int selected_option);
 
+void race_selection_window(window_info *wi, character *pc);
+
+void class_selection_window(window_info *wi, character *pc);
+
 // global menu options array
 extern enum game_mode mode;
 menu_option menu_options[100];

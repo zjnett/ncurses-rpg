@@ -9,6 +9,8 @@ static char *class_lookup[4] = { "WARRIOR", "WIZARD", "ROGUE", "RANGER" };
 // race name lookup table
 static char *race_lookup[4] = { "HUMAN", "ELF", "DWARF", "DEVIL" };
 
+static int num_races = 4;
+
 typedef enum _character_class_id {
     WARRIOR,
     WIZARD,
@@ -72,5 +74,7 @@ typedef struct _character {
 static inline void init_character(character *c) {
     memset(c, 0, sizeof(character));
 }
+
+void select_pc_race(character *pc, int race_option);
 
 #endif
