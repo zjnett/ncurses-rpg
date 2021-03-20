@@ -77,7 +77,7 @@ void character_creation_loop(window_info *wi) {
     character new_player_character;
     init_character(&new_player_character);
     do {
-        //clear();
+        wclear(stdscr);
 
         select_cc_menu_option(selected_field);
         render_character_creation_menu(wi, selected_field, &new_player_character);

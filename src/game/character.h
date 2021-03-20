@@ -3,6 +3,38 @@
 
 #include "rpg.h"
 
+// class name lookup table
+static char *class_lookup[4] = { "WARRIOR", "WIZARD", "ROGUE", "RANGER" };
+
+// race name lookup table
+static char *race_lookup[4] = { "HUMAN", "ELF", "DWARF", "DEVIL" };
+
+typedef enum _character_class_id {
+    WARRIOR,
+    WIZARD,
+    ROGUE,
+    RANGER
+} character_class_id;
+
+typedef enum _character_race_id {
+    HUMAN,
+    ELF,
+    DWARF,
+    DEVIL
+} character_race_id;
+
+typedef struct character_class {
+    character_class_id id;
+    char class_name[100];
+    char class_description[MAX_SIZE];
+} character_class;
+
+typedef struct character_race {
+    character_race_id id;
+    char race_name[100];
+    char race_description[MAX_SIZE];
+} character_race;
+
 // TODO: create xp roadmap
 typedef struct _level {
     int level;
@@ -13,7 +45,9 @@ typedef struct _level {
 // TODO: think of more items to be added
 typedef struct _character {
     char name[100];
-    char race[100];
+
+    character_race race;
+    character_class class;
     
     int max_hp;
     int current_hp;

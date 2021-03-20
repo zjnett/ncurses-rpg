@@ -127,7 +127,7 @@ void render_character_creation_menu(window_info *wi, int selected_option, charac
 
     y += vertical_padding; // move 3 rows down
 
-    char buffer[MAX_SIZE];
+    char buffer[MAX_SIZE] = { '\0' };
 
     for (int i = 0; i < num_cc_options; i++) {
         if (character_creation_options[i].is_selected)
@@ -149,9 +149,19 @@ void render_character_creation_menu(window_info *wi, int selected_option, charac
 }
 
 void prep_formatted_attribute(int id, character *pc, char *dest) {
+    memset(dest, 0, MAX_SIZE);
     strcpy(dest, character_creation_options[id].name);
-    if (id == 0) {
-        strcat(dest, pc->name);
+    switch(id) {
+        case 0: // name
+            strcat(dest, pc->name);
+            break;
+        case 1: // race
+            strcat(dest, race_lookup[pc->race.id]);
+            break;
+        case 2: // class
+            strcat(dest, class_lookup[pc->class.id]);
+            break;
+
     }
 }
 
@@ -180,8 +190,8 @@ void render_dialogue_menu() {
 }
 
 void gets_window(window_info *wi, char *name, char *dest) {
-    char buffer[MAX_SIZE] = { '\0' };
-    char str[100];
+    char str[100] = { '\0' };
+    memset(dest, 0, strlen(dest)+1);
 
     sprintf(str, "Enter a %s: ", name);
 
@@ -201,13 +211,9 @@ void gets_window(window_info *wi, char *name, char *dest) {
 
     wgetstr(p, dest);
 
-    //mvwprintw(p, 0, 0, "%s", buffer);
-
     doupdate();
 
     noecho();
-
-    delwin(p);
 }
 
 int getint_window() {
@@ -224,9 +230,7 @@ int find_selected_cc_option(void) {
 }
 
 void get_character_attribute(character *pc, int selected_option) {
-    char return_buffer[MAX_SIZE];
     if (!strncmp(character_creation_options[selected_option].name, "Name", 4)) {
-        gets_window(&wi, "name", return_buffer);
-        strcpy(pc->name, return_buffer);
+        gets_window(&wi, "name", pc->name);
     }
 }
