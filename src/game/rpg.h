@@ -7,6 +7,9 @@
 #include <string.h>
 #include <time.h>
 #include <signal.h>
+#include <locale.h>
+#include <wchar.h>
+#include <panel.h>
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_mixer.h>

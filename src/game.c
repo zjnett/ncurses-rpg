@@ -61,7 +61,7 @@ int do_game_loop(window_info *wi)
             break;
         }
 
-        input = getch();
+        input = wgetch(stdscr);
 
         process_menu_input(input, &selected_option);
 
@@ -75,13 +75,14 @@ void character_creation_loop(window_info *wi) {
     int character_creation_completed = 0, selected_field = 0;
     int input = 0;
     character new_player_character;
+    init_character(&new_player_character);
     do {
-        clear();
+        //clear();
 
         select_cc_menu_option(selected_field);
         render_character_creation_menu(wi, selected_field, &new_player_character);
 
-        input = getch();
+        input = wgetch(stdscr);
 
         switch(input) {
             case KEY_UP:
@@ -95,6 +96,9 @@ void character_creation_loop(window_info *wi) {
                     selected_field = 0;
                 else
                     selected_field++;
+                break;
+            case 10: // enter
+                character_creation_options[selected_field].ptr();
                 break;
         }
 

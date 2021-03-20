@@ -9,6 +9,8 @@ int main(int argc, char *argv[])
 
     srand(time(NULL));
 
+    setlocale(LC_ALL, "");
+
     // initialize ncurses
     initscr();
     cbreak();
@@ -27,8 +29,7 @@ int main(int argc, char *argv[])
     init_pair(7, COLOR_WHITE, COLOR_BLACK);
 
     // initialize window info
-    window_info wi;
-    init_window_info(&wi);
+    init_window_info();
 
     mode = MAIN_MENU;
 

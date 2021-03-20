@@ -93,9 +93,9 @@ void process_menu_input(int input, int *selected_option)
 }
 
 void init_character_creation_options(void) {
-    create_menu_option(&character_creation_options[0], "Name: ", NULL, 0);
-    create_menu_option(&character_creation_options[1], "Race: ", NULL, 0);
-    create_menu_option(&character_creation_options[2], "Class: ", NULL, 0);
+    create_menu_option(&character_creation_options[0], "Name: ", get_character_attribute, 0);
+    create_menu_option(&character_creation_options[1], "Race: ", get_character_attribute, 0);
+    create_menu_option(&character_creation_options[2], "Class: ", get_character_attribute, 0);
     num_cc_options = 3;
 }
 
@@ -110,17 +110,147 @@ void select_cc_menu_option(int selected_field) {
 void render_character_creation_menu(window_info *wi, int selected_option, character *pc) {
     int initial_y = (wi->max_rows * 0.1), initial_x = (wi->max_cols * 0.1);
     int x = initial_x, y = initial_y;
+
+    int vertical_padding = 3;
+
     box(stdscr, '|', '-');
+
+    attron(A_BOLD);
+    mvaddstr(y++, x, "Attributes:");
+    attroff(A_BOLD);
+
+    // update these test values to be actual character parameters
+    print_status_bar(y++, x, "HP", 4, 5, 20);
+    print_status_bar(y++, x, "SP", 2, 7, 15);
+    print_status_bar(y++, x, "MP", 1, 20, 30);
+
+    y += vertical_padding; // move 3 rows down
 
     for (int i = 0; i < num_cc_options; i++) {
         if (character_creation_options[i].is_selected)
             attron(COLOR_PAIR(6));
-        mvaddstr(y + i, x, character_creation_options[i].name);
+        mvaddstr(y++, x, character_creation_options[i].name);
         attroff(COLOR_PAIR(6));
     }
 
+    y += vertical_padding;
+
+    mvprintw(y++, x, "STR: %d", pc->strength);
+    mvprintw(y++, x, "DEX: %d", pc->dexterity);
+    mvprintw(y++, x, "CON: %d", pc->constitution);
+    mvprintw(y++, x, "INT: %d", pc->intelligence);
+    mvprintw(y++, x, "WIS: %d", pc->wisdom);
+    mvprintw(y++, x, "CHA: %d", pc->charisma);
+
+    char buf[MAX_SIZE] = { '\0' };
+    //gets_window(wi, "name", buf);
+}
+
+void print_status_bar(int y, int x, char *name, short color_code, int actual, int nominal) {
+    mvprintw(y, x, "%s: ", name);
+    x += strlen(name) + 2; // move over x coordinates by name len + 2 (: and space)
+    attron(COLOR_PAIR(color_code));
+
+    double ratio = (double) actual / nominal;
+    int red_nominal = 30, red_actual = red_nominal * ratio;
+    
+    for (int i = 0; i < red_nominal; i++) {
+        if (i <= red_actual)
+            mvprintw(y, x, "%lc", 0x2588);
+        else
+            mvprintw(y, x, "%lc", 0x2591);
+        x++;
+    }
+    x += 1; // move one more space over
+    attroff(COLOR_PAIR(color_code));
+    mvprintw(y, x, "%d / %d", actual, nominal);
 }
 
 void render_dialogue_menu() {
 
+}
+
+void gets_window(window_info *wi, char *name, char *dest) {
+    char buffer[MAX_SIZE] = { '\0' };
+    char str[100];
+
+    sprintf(str, "Enter a %s: ", name);
+
+    window_info p_info = { (wi->max_rows/2), (wi->max_cols/2), (wi->max_rows/2)/2, (wi->max_cols/2)/2 };
+    WINDOW *p = newwin(p_info.max_rows, p_info.max_cols, 
+                        wi->center_rows - (p_info.center_rows), 
+                        wi->center_cols - (p_info.center_cols));
+    PANEL *p_panel = new_panel(p);
+
+    box(p, '|', '-');
+
+    update_panels();
+
+    mvwaddstr(p, p_info.center_rows, p_info.center_cols - strlen(str), str);
+
+    echo();
+
+    wgetstr(p, buffer);
+
+    doupdate();
+
+    noecho();
+}
+
+// old code, to be removed... eventually :) (not using panels)
+/*
+    // fixed width and height? could modify to be variable
+    window_info gets_info = { 20, 30, 10, 15 };
+    WINDOW *gets_window = newwin(gets_info.max_rows, gets_info.max_cols, wi->center_cols - gets_info.center_rows, wi->center_rows - gets_info.center_rows);
+    box(gets_window, '|', '-');
+    mvwaddstr(gets_window, gets_info.center_rows, gets_info.center_cols - 11, "This is a test string");
+
+    int initial_y = gets_info.center_rows, initial_x = gets_info.center_cols + 23;
+    int y = initial_y, x = initial_x;
+
+    refresh();
+
+    redrawwin(gets_window);
+    wrefresh(gets_window);
+
+    char buffer[MAX_SIZE] = { '\0' };
+    int input = -1, index = 0;
+    //while (!strcmp(buffer, "")) {
+        //mvwprintw(gets_window, 10, 10, buffer);
+        wmove(gets_window, initial_y, initial_x);
+        echo();
+        
+        wgetstr(gets_window, buffer);
+    //}
+    noecho();
+    wclear(gets_window);
+    delwin(gets_window);
+    // return to dest
+    strcpy(dest, buffer);
+*/
+
+int getint_window() {
+    return 0;
+}
+
+int find_selected_cc_option(void) {
+    for (int i = 0; i < num_cc_options; i++) {
+        if (character_creation_options[i].is_selected)
+            return i;
+    }
+    return -1;
+}
+
+void get_character_attribute(void) {
+    // this function could be avoided with modified function ptrs or by a global selection value
+    // but, it's only called when the player hits enter, so it should be okay
+    int index = find_selected_cc_option();
+    char return_buffer[MAX_SIZE];
+
+    if (index != -1) {
+        if (!strncmp(character_creation_options[index].name, "Name", 4)) {
+            gets_window(&wi, "name", return_buffer);
+            //strcpy()
+        }
+    }
 }

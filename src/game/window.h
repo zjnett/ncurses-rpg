@@ -10,10 +10,13 @@ typedef struct _window_info {
     int center_cols;
 } window_info;
 
-static inline void init_window_info(window_info *wi) {
-    getmaxyx(stdscr, wi->max_rows, wi->max_cols);
-    wi->center_rows = wi->max_rows / 2;
-    wi->center_cols = wi->max_cols / 2;
+// global window info
+window_info wi;
+
+static inline void init_window_info() {
+    getmaxyx(stdscr, wi.max_rows, wi.max_cols);
+    wi.center_rows = wi.max_rows / 2;
+    wi.center_cols = wi.max_cols / 2;
 }
 
 #endif

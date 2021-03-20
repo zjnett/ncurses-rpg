@@ -1,6 +1,8 @@
 #ifndef CHARACTER_H
 #define CHARACTER_H
 
+#include "rpg.h"
+
 // TODO: create xp roadmap
 typedef struct _level {
     int level;
@@ -32,5 +34,9 @@ typedef struct _character {
     level level;
 
 } character;
+
+static inline void init_character(character *c) {
+    memset(c, 0, sizeof(character));
+}
 
 #endif
