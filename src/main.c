@@ -15,6 +15,7 @@ int main(int argc, char *argv[])
     initscr();
     cbreak();
     noecho();
+    curs_set(0);
     keypad(stdscr, true);
 
     // TODO: segregate color logic into its own function

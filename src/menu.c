@@ -208,12 +208,14 @@ void gets_window(window_info *wi, char *name, char *dest) {
     mvwaddstr(p, p_info.center_rows, p_info.center_cols - strlen(str), str);
 
     echo();
+    curs_set(1);
 
     wgetstr(p, dest);
 
     doupdate();
 
     noecho();
+    curs_set(0);
 }
 
 int getint_window() {
@@ -331,5 +333,58 @@ void race_selection_window(window_info *wi, character *pc) {
 }
 
 void class_selection_window(window_info *wi, character *pc) {
+    window_info p_info = { (wi->max_rows/1.5), (wi->max_cols/1.7), (wi->max_rows/1.5)/2, (wi->max_cols/1.7)/2 };
+    WINDOW *p = newwin(p_info.max_rows, p_info.max_cols, 
+                        wi->center_rows - (p_info.center_rows), 
+                        wi->center_cols - (p_info.center_cols));
+    PANEL *p_panel = new_panel(p);
 
+    keypad(p, true);
+    box(p, '|', '-');
+
+    // Initial horizontal margin of 0.5%, paragraph margin of 2%, line break at 80% of max.
+    int initial_x_margin = (ceil(p_info.max_cols * 0.05)), initial_y_margin = (ceil(p_info.max_rows * 0.05)), 
+        para_margin = (p_info.max_cols * 0.2), line_break = (p_info.max_cols * 0.9);
+
+    int input = 0, class_option = pc->class.id;
+    char dummy[10];
+
+    while (input != 10) { // not enter
+        int y = initial_y_margin, x = initial_x_margin;
+        update_panels();
+
+        for (int i = 0; i < num_classes; i++) {
+            x = initial_x_margin;
+            if (class_option == i)
+                wattron(p, COLOR_PAIR(3));
+            mvwaddstr(p, y++, x, class_lookup[i]);
+            wattroff(p, COLOR_PAIR(3));
+            // move x to paragraph margin
+            //x = para_margin;
+            //wmove(p, y, x);
+            y++;
+        }
+
+        input = wgetch(p);
+
+        switch(input) {
+        case KEY_UP:
+            if (class_option == 0)
+                class_option = num_classes - 1;
+            else
+                class_option--;
+            break;
+        case KEY_DOWN:
+            if (class_option == num_classes - 1)
+                class_option = 0;
+            else
+                class_option++;
+            break;
+        case 10: // enter
+            select_pc_class(pc, class_option);
+            continue;
+        }
+
+        doupdate();
+    }
 }
