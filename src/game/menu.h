@@ -7,7 +7,7 @@
 
 typedef struct _menu_option {
     char name[100];
-    void (*ptr)();
+    void (*ptr)(void);
     int name_length;
     int is_selected;
 } menu_option;
@@ -32,11 +32,13 @@ void select_cc_menu_option(int selected_field);
 
 void render_character_creation_menu(window_info *wi, int selected_option, character *pc);
 
+void prep_formatted_attribute(int id, character *pc, char *dest);
+
 void print_status_bar(int y, int x, char *name, short color_code, int actual, int nominal);
 
 void gets_window(window_info *wi, char *name, char *dest);
 
-void get_character_attribute(void);
+void get_character_attribute(character *pc, int selected_option);
 
 // global menu options array
 extern enum game_mode mode;

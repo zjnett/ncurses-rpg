@@ -93,9 +93,10 @@ void process_menu_input(int input, int *selected_option)
 }
 
 void init_character_creation_options(void) {
-    create_menu_option(&character_creation_options[0], "Name: ", get_character_attribute, 0);
-    create_menu_option(&character_creation_options[1], "Race: ", get_character_attribute, 0);
-    create_menu_option(&character_creation_options[2], "Class: ", get_character_attribute, 0);
+    void (*ptr)() = get_character_attribute;
+    create_menu_option(&character_creation_options[0], "Name: ", ptr, 0);
+    create_menu_option(&character_creation_options[1], "Race: ", ptr, 0);
+    create_menu_option(&character_creation_options[2], "Class: ", ptr, 0);
     num_cc_options = 3;
 }
 
@@ -126,10 +127,13 @@ void render_character_creation_menu(window_info *wi, int selected_option, charac
 
     y += vertical_padding; // move 3 rows down
 
+    char buffer[MAX_SIZE];
+
     for (int i = 0; i < num_cc_options; i++) {
         if (character_creation_options[i].is_selected)
             attron(COLOR_PAIR(6));
-        mvaddstr(y++, x, character_creation_options[i].name);
+        prep_formatted_attribute(i, pc, buffer);
+        mvaddstr(y++, x, buffer);
         attroff(COLOR_PAIR(6));
     }
 
@@ -142,8 +146,13 @@ void render_character_creation_menu(window_info *wi, int selected_option, charac
     mvprintw(y++, x, "WIS: %d", pc->wisdom);
     mvprintw(y++, x, "CHA: %d", pc->charisma);
 
-    char buf[MAX_SIZE] = { '\0' };
-    //gets_window(wi, "name", buf);
+}
+
+void prep_formatted_attribute(int id, character *pc, char *dest) {
+    strcpy(dest, character_creation_options[id].name);
+    if (id == 0) {
+        strcat(dest, pc->name);
+    }
 }
 
 void print_status_bar(int y, int x, char *name, short color_code, int actual, int nominal) {
@@ -190,49 +199,22 @@ void gets_window(window_info *wi, char *name, char *dest) {
 
     echo();
 
-    wgetstr(p, buffer);
+    wgetstr(p, dest);
+
+    //mvwprintw(p, 0, 0, "%s", buffer);
 
     doupdate();
 
     noecho();
+
+    delwin(p);
 }
-
-// old code, to be removed... eventually :) (not using panels)
-/*
-    // fixed width and height? could modify to be variable
-    window_info gets_info = { 20, 30, 10, 15 };
-    WINDOW *gets_window = newwin(gets_info.max_rows, gets_info.max_cols, wi->center_cols - gets_info.center_rows, wi->center_rows - gets_info.center_rows);
-    box(gets_window, '|', '-');
-    mvwaddstr(gets_window, gets_info.center_rows, gets_info.center_cols - 11, "This is a test string");
-
-    int initial_y = gets_info.center_rows, initial_x = gets_info.center_cols + 23;
-    int y = initial_y, x = initial_x;
-
-    refresh();
-
-    redrawwin(gets_window);
-    wrefresh(gets_window);
-
-    char buffer[MAX_SIZE] = { '\0' };
-    int input = -1, index = 0;
-    //while (!strcmp(buffer, "")) {
-        //mvwprintw(gets_window, 10, 10, buffer);
-        wmove(gets_window, initial_y, initial_x);
-        echo();
-        
-        wgetstr(gets_window, buffer);
-    //}
-    noecho();
-    wclear(gets_window);
-    delwin(gets_window);
-    // return to dest
-    strcpy(dest, buffer);
-*/
 
 int getint_window() {
     return 0;
 }
 
+// probably not going to be used
 int find_selected_cc_option(void) {
     for (int i = 0; i < num_cc_options; i++) {
         if (character_creation_options[i].is_selected)
@@ -241,16 +223,10 @@ int find_selected_cc_option(void) {
     return -1;
 }
 
-void get_character_attribute(void) {
-    // this function could be avoided with modified function ptrs or by a global selection value
-    // but, it's only called when the player hits enter, so it should be okay
-    int index = find_selected_cc_option();
+void get_character_attribute(character *pc, int selected_option) {
     char return_buffer[MAX_SIZE];
-
-    if (index != -1) {
-        if (!strncmp(character_creation_options[index].name, "Name", 4)) {
-            gets_window(&wi, "name", return_buffer);
-            //strcpy()
-        }
+    if (!strncmp(character_creation_options[selected_option].name, "Name", 4)) {
+        gets_window(&wi, "name", return_buffer);
+        strcpy(pc->name, return_buffer);
     }
 }

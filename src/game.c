@@ -98,7 +98,9 @@ void character_creation_loop(window_info *wi) {
                     selected_field++;
                 break;
             case 10: // enter
-                character_creation_options[selected_field].ptr();
+                // below is over-engineering-- i don't need function pointers for something like this
+                // character_creation_options[selected_field].ptr();
+                get_character_attribute(&new_player_character, selected_field);
                 break;
         }
 
