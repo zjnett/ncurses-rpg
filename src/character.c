@@ -52,7 +52,10 @@ void calculate_character_attributes(character *pc) {
     } else {
         pc->max_magic = 10 + (abs(pc->intelligence)*5);
     }
-    pc->current_hp = pc->max_hp * 0.25;
-    pc->current_stamina = pc->max_stamina * 0.5;
-    pc->current_magic = pc->max_magic * 0.75;
+    //pc->current_hp = pc->max_hp * 0.25;
+    //pc->current_stamina = pc->max_stamina * 0.5;
+    //pc->current_magic = pc->max_magic * 0.75;
+    pc->current_hp = pc->max_hp;
+    pc->current_stamina = pc->max_stamina;
+    pc->current_magic = pc->max_magic;
 }
