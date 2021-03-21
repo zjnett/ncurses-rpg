@@ -90,5 +90,9 @@ void select_pc_race(character *pc, int race_option);
 void reset_pc_ability_scores(character *pc);
 void select_pc_class(character *pc, int class_option);
 void calculate_character_attributes(character *pc);
+void roll_ability_score(int ability_score_rolls[6][4], int roll_num);
+void calculate_ability_scores_and_mods(character *pc, int ability_score_rolls[6][4]);
+int find_min_index(int array[4]);
+int find_modifier(int value);
 
 #endif

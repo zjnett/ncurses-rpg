@@ -44,6 +44,10 @@ void race_selection_window(window_info *wi, character *pc);
 
 void class_selection_window(window_info *wi, character *pc);
 
+void ability_score_roll_window(window_info *wi, character *pc);
+
+void roll_ability_score_window(window_info *wi, int ability_score_rolls[6][4]);
+
 // global menu options array
 extern enum game_mode mode;
 menu_option menu_options[100];

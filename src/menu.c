@@ -97,7 +97,8 @@ void init_character_creation_options(void) {
     create_menu_option(&character_creation_options[0], "Name: ", ptr, 0);
     create_menu_option(&character_creation_options[1], "Race: ", ptr, 0);
     create_menu_option(&character_creation_options[2], "Class: ", ptr, 0);
-    num_cc_options = 3;
+    create_menu_option(&character_creation_options[3], "Roll for ability scores!", ptr, 0);
+    num_cc_options = 4;
 }
 
 // maybe possible to toggle these on-off instead of systematically looping every game loop?
@@ -238,6 +239,9 @@ void get_character_attribute(character *pc, int selected_option) {
         race_selection_window(&wi, pc);
     } else if (!strncmp(character_creation_options[selected_option].name, "Class", 5)) {
         class_selection_window(&wi, pc);
+    } else if (!strncmp(character_creation_options[selected_option].name, "Roll", 4)) {
+        // ability score rolling
+        ability_score_roll_window(&wi, pc);
     }
 }
 
@@ -394,3 +398,102 @@ void class_selection_window(window_info *wi, character *pc) {
         doupdate();
     }
 }
+
+void ability_score_roll_window(window_info *wi, character *pc) {
+    window_info p_info = { (wi->max_rows/1.5), (wi->max_cols/1.7), (wi->max_rows/1.5)/2, (wi->max_cols/1.7)/2 };
+    WINDOW *p = newwin(p_info.max_rows, p_info.max_cols, 
+                        wi->center_rows - (p_info.center_rows), 
+                        wi->center_cols - (p_info.center_cols));
+    PANEL *p_panel = new_panel(p);
+
+    keypad(p, true);
+    box(p, '|', '-');
+
+    int ability_score_rolls[6][4] = { { 0 } };
+
+    int initial_x_margin = (ceil(p_info.max_cols * 0.05)), initial_y_margin = (p_info.center_rows) - 3, 
+        para_margin = (p_info.max_cols * 0.2), line_break = (p_info.max_cols * 0.9);
+
+    int input = 0, class_option = pc->class.id;
+    char dummy[10];
+    int has_rolled = 0;
+
+    while (input != 10) { // not enter
+        int y = initial_y_margin, x = initial_x_margin;
+        update_panels();
+
+        wattron(p, COLOR_PAIR(5));
+        mvwaddstr(p, 0, p_info.center_cols - 18, "Press 'R' to roll dice values!");
+        wattroff(p, COLOR_PAIR(5));
+
+        // TODO: possible refactor, abs only needed because of ternary operator - printing (no 'empty' character)
+        mvwprintw(p, y++, x, "STR: %d (%c%d)", pc->strength, pc->str_mod >= 0 ? '+' : '-', abs(pc->str_mod));
+        mvwprintw(p, y++, x, "DEX: %d (%c%d)", pc->dexterity, pc->dex_mod >= 0 ? '+' : '-', abs(pc->dex_mod));
+        mvwprintw(p, y++, x, "CON: %d (%c%d)", pc->constitution, pc->con_mod >= 0 ? '+' : '-', abs(pc->con_mod));
+        mvwprintw(p, y++, x, "INT: %d (%c%d)", pc->intelligence, pc->int_mod >= 0 ? '+' : '-', abs(pc->int_mod));
+        mvwprintw(p, y++, x, "WIS: %d (%c%d)", pc->wisdom, pc->wis_mod >= 0 ? '+' : '-', abs(pc->wis_mod));
+        mvwprintw(p, y++, x, "CHA: %d (%c%d)", pc->charisma, pc->cha_mod >= 0 ? '+' : '-', abs(pc->cha_mod));
+
+        input = wgetch(p);
+
+        switch(input) {
+        case 'r':
+        case 'R':
+            roll_ability_score_window(wi, ability_score_rolls);
+            calculate_ability_scores_and_mods(pc, ability_score_rolls);
+            has_rolled = 1;
+            break;
+
+        case 10: // enter
+            continue;
+        }
+
+        doupdate();
+    }
+}
+
+void roll_ability_score_window(window_info *wi, int ability_score_rolls[6][4]) {
+    window_info p_info = { (wi->max_rows/2.5), (wi->max_cols/3), (wi->max_rows/2.5)/2, (wi->max_cols/3)/2 };
+    WINDOW *p = newwin(p_info.max_rows, p_info.max_cols, 
+                        wi->center_rows - (p_info.center_rows), 
+                        wi->center_cols - (p_info.center_cols));
+    PANEL *p_panel = new_panel(p);
+
+    int num_rolls = 0;
+
+    box(p, '|', '-');
+
+    update_panels();
+
+    window_print_centered_string(p, p_info, "NOW ROLLING...");
+
+    int initial_y = p_info.center_rows+1, initial_x = p_info.center_cols;
+    int y = initial_y, x = initial_x;
+    int stop = 0;
+
+    while (num_rolls < 6) {
+        stop = 0;
+        while (stop != 10) {
+            y = initial_y;
+            x = initial_x;
+            nodelay(p, true);
+            mvwaddstr(p, y++, x - 15, "Press ENTER to stop the dice!");
+            roll_ability_score(ability_score_rolls, num_rolls);
+            mvwprintw(p, y++, x - 4, "%d %d %d %d", ability_score_rolls[num_rolls][0], ability_score_rolls[num_rolls][1], 
+                                                    ability_score_rolls[num_rolls][2], ability_score_rolls[num_rolls][3]);
+            stop = wgetch(p);
+        }
+        nodelay(p, false);
+        if (num_rolls != 5) {
+            mvwprintw(p, y, x - 25, "Roll %d complete! Press any key to roll again...", num_rolls+1);
+        } else {
+            mvwprintw(p, y, x - 26, "Rolling complete! Press any key to return to setup.");
+        }
+        wgetch(p);
+        num_rolls++;
+    }
+
+    doupdate();
+    wclear(p);
+}
+

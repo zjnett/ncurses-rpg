@@ -59,3 +59,85 @@ void calculate_character_attributes(character *pc) {
     pc->current_stamina = pc->max_stamina;
     pc->current_magic = pc->max_magic;
 }
+
+void roll_ability_score(int ability_score_rolls[6][4], int roll_num) {
+    for (int i = 0; i < 4; i++) {
+        ability_score_rolls[roll_num][i] = rand() % 6 + 1;
+    }
+}
+
+void calculate_ability_scores_and_mods(character *pc, int ability_score_rolls[6][4]) {
+    int ability_scores[6];
+    int ability_score_mods[6];
+
+    // sum score values
+    for (int i = 0; i < 6; i++) {
+        ability_scores[i] = ability_score_rolls[i][0] + ability_score_rolls[i][1] + ability_score_rolls[i][2] + ability_score_rolls[i][3];
+        // subtract min value from result
+        ability_scores[i] -= ability_score_rolls[i][find_min_index(ability_score_rolls[i])];
+    }
+
+    // fulfill ability scores (arbitrarily for now)
+    // TODO: don't make this arbitrary
+    pc->strength += ability_scores[0];
+    pc->dexterity += ability_scores[1];
+    pc->constitution += ability_scores[2];
+    pc->intelligence += ability_scores[3];
+    pc->wisdom += ability_scores[4];
+    pc->charisma += ability_scores[5];
+
+    pc->str_mod = find_modifier(pc->strength);
+    pc->dex_mod = find_modifier(pc->dexterity);
+    pc->con_mod = find_modifier(pc->constitution);
+    pc->int_mod = find_modifier(pc->intelligence);
+    pc->wis_mod = find_modifier(pc->wisdom);
+    pc->cha_mod = find_modifier(pc->charisma);
+}
+
+int find_min_index(int array[4]) {
+    int min = array[0], min_index = 0;
+    for (int i = 1; i < 4; i++) {
+        if (array[i] < min) {
+            min = array[i];
+            min_index = i;
+        }
+    }
+    return min_index;
+}
+
+int find_modifier(int value) {
+    switch(value) {
+        case 20:
+            return +5;
+        case 19:
+        case 18:
+            return +4;
+        case 17:
+        case 16:
+            return +3;
+        case 15:
+        case 14:
+            return +2;
+        case 13:
+        case 12:
+            return +1;
+        case 11:
+        case 10:
+            return 0;
+        case 9:
+        case 8:
+            return -1;
+        case 7:
+        case 6:
+            return -2;
+        case 5:
+        case 4:
+            return -3;
+        case 3:
+        case 2:
+            return -4;
+        case 1:
+            return -5;
+    }
+    return 0;
+}

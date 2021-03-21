@@ -79,9 +79,9 @@ void character_creation_loop(window_info *wi) {
 
     select_pc_race(&new_player_character, HUMAN);
     select_pc_class(&new_player_character, WARRIOR);
-    
+
     do {
-        wclear(stdscr);
+        //wclear(stdscr);
 
         select_cc_menu_option(selected_field);
         render_character_creation_menu(wi, selected_field, &new_player_character);
@@ -105,6 +105,7 @@ void character_creation_loop(window_info *wi) {
                 // below is over-engineering-- i don't need function pointers for something like this
                 // character_creation_options[selected_field].ptr();
                 get_character_attribute(&new_player_character, selected_field);
+                wclear(stdscr); // only clear on 'enter' to prevent box 'flickering'
                 break;
         }
 

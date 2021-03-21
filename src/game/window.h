@@ -19,4 +19,6 @@ static inline void init_window_info() {
     wi.center_cols = wi.max_cols / 2;
 }
 
+void window_print_centered_string(WINDOW *w, window_info wi, char *str);
+
 #endif
