@@ -140,12 +140,13 @@ void render_character_creation_menu(window_info *wi, int selected_option, charac
 
     y += vertical_padding;
 
-    mvprintw(y++, x, "STR: %d", pc->strength);
-    mvprintw(y++, x, "DEX: %d", pc->dexterity);
-    mvprintw(y++, x, "CON: %d", pc->constitution);
-    mvprintw(y++, x, "INT: %d", pc->intelligence);
-    mvprintw(y++, x, "WIS: %d", pc->wisdom);
-    mvprintw(y++, x, "CHA: %d", pc->charisma);
+    // TODO: possible refactor, abs only needed because of ternary operator - printing (no 'empty' character)
+    mvprintw(y++, x, "STR: %d (%c%d)", pc->strength, pc->str_mod >= 0 ? '+' : '-', abs(pc->str_mod));
+    mvprintw(y++, x, "DEX: %d (%c%d)", pc->dexterity, pc->dex_mod >= 0 ? '+' : '-', abs(pc->dex_mod));
+    mvprintw(y++, x, "CON: %d (%c%d)", pc->constitution, pc->con_mod >= 0 ? '+' : '-', abs(pc->con_mod));
+    mvprintw(y++, x, "INT: %d (%c%d)", pc->intelligence, pc->int_mod >= 0 ? '+' : '-', abs(pc->int_mod));
+    mvprintw(y++, x, "WIS: %d (%c%d)", pc->wisdom, pc->wis_mod >= 0 ? '+' : '-', abs(pc->wis_mod));
+    mvprintw(y++, x, "CHA: %d (%c%d)", pc->charisma, pc->cha_mod >= 0 ? '+' : '-', abs(pc->cha_mod));
 
 }
 
@@ -333,6 +334,7 @@ void race_selection_window(window_info *wi, character *pc) {
             break;
         case 10: // enter
             select_pc_race(pc, race_option);
+            calculate_mods(pc);
             continue;
         }
 

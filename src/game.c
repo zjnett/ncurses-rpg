@@ -80,6 +80,9 @@ void character_creation_loop(window_info *wi) {
     select_pc_race(&new_player_character, HUMAN);
     select_pc_class(&new_player_character, WARRIOR);
 
+    init_ability_scores(&new_player_character);
+    calculate_mods(&new_player_character);
+
     do {
         //wclear(stdscr);
 

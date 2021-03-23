@@ -2,28 +2,45 @@
 
 void select_pc_race(character *pc, int race_option) {
     // fulfill all members of 'race' struct
+    remove_current_racial_mods(pc); // remove old racial mods
     pc->race.id = race_option;
     strcpy(pc->race.race_name, race_lookup[race_option]);
-    reset_pc_ability_scores(pc);
-    switch(race_option) {
-        case HUMAN:
-            pc->constitution += 2;
-            pc->wisdom += 1;
+    //reset_pc_ability_scores(pc);
+    calculate_racial_mods(pc);
+    add_racial_mods(pc); // calculate new racial mods
+    calculate_character_attributes(pc);
+    calculate_mods(pc);
+}
+
+void calculate_racial_mods(character *pc) {
+    // compute modifier and place it in racial_mods array
+    // [STR, DEX, CON, INT, WIS, CHA]
+    // [ 0,   1,   2,   3,   4,   5 ]
+    reset_racial_mods(pc);
+    switch(pc->race.id) {
+        case HUMAN: // con +2, wis +1
+            pc->race.racial_modifier_array[CON] = 2;
+            pc->race.racial_modifier_array[WIS] = 1;
             break;
-        case ELF:
-            pc->dexterity += 2;
-            pc->intelligence += 1;
+        case ELF: // dex +2, int +1
+            pc->race.racial_modifier_array[DEX] = 2;
+            pc->race.racial_modifier_array[INT] = 1;
             break;
-        case DWARF:
-            pc->strength += 2;
-            pc->constitution += 1;
+        case DWARF: // str+2, con+1
+            pc->race.racial_modifier_array[STR] = 2;
+            pc->race.racial_modifier_array[CON] = 1;
             break;
-        case DEVIL:
-            pc->charisma += 2;
-            pc->dexterity += 1;
+        case DEVIL: // cha+2, dex+1
+            pc->race.racial_modifier_array[CHA] = 2;
+            pc->race.racial_modifier_array[DEX] = 1;
             break;
     }
-    calculate_character_attributes(pc);
+}
+
+void reset_racial_mods(character *pc) {
+    for (int i = 0; i < 6; i++) {
+        pc->race.racial_modifier_array[i] = 0;
+    }
 }
 
 void reset_pc_ability_scores(character *pc) {
@@ -66,15 +83,29 @@ void roll_ability_score(int ability_score_rolls[6][4], int roll_num) {
     }
 }
 
+void init_ability_scores(character *pc) {
+    pc->strength = 0 + pc->race.racial_modifier_array[STR];
+    pc->dexterity = 0 + pc->race.racial_modifier_array[DEX];
+    pc->constitution = 0 + pc->race.racial_modifier_array[CON];
+    pc->intelligence = 0 + pc->race.racial_modifier_array[INT];
+    pc->wisdom = 0 + pc->race.racial_modifier_array[WIS];
+    pc->charisma = 0 + pc->race.racial_modifier_array[CHA];
+}
+
 void calculate_ability_scores_and_mods(character *pc, int ability_score_rolls[6][4]) {
     int ability_scores[6];
     int ability_score_mods[6];
+
+    reset_pc_ability_scores(pc);
+    calculate_racial_mods(pc);
+    add_racial_mods(pc);
 
     // sum score values
     for (int i = 0; i < 6; i++) {
         ability_scores[i] = ability_score_rolls[i][0] + ability_score_rolls[i][1] + ability_score_rolls[i][2] + ability_score_rolls[i][3];
         // subtract min value from result
         ability_scores[i] -= ability_score_rolls[i][find_min_index(ability_score_rolls[i])];
+        //ability_scores[i] += pc->race.racial_modifier_array[i]; // add racial bonuses to ability scores
     }
 
     // fulfill ability scores (arbitrarily for now)
@@ -86,12 +117,35 @@ void calculate_ability_scores_and_mods(character *pc, int ability_score_rolls[6]
     pc->wisdom += ability_scores[4];
     pc->charisma += ability_scores[5];
 
+    calculate_mods(pc);
+    calculate_character_attributes(pc);
+}
+
+void calculate_mods(character *pc) {
     pc->str_mod = find_modifier(pc->strength);
     pc->dex_mod = find_modifier(pc->dexterity);
     pc->con_mod = find_modifier(pc->constitution);
     pc->int_mod = find_modifier(pc->intelligence);
     pc->wis_mod = find_modifier(pc->wisdom);
     pc->cha_mod = find_modifier(pc->charisma);
+}
+
+void remove_current_racial_mods(character *pc) {
+    pc->strength -= pc->race.racial_modifier_array[STR];
+    pc->dexterity -= pc->race.racial_modifier_array[DEX];
+    pc->constitution -= pc->race.racial_modifier_array[CON];
+    pc->intelligence -= pc->race.racial_modifier_array[INT];
+    pc->wisdom -= pc->race.racial_modifier_array[WIS];
+    pc->charisma -= pc->race.racial_modifier_array[CHA];
+}
+
+void add_racial_mods(character *pc) {
+    pc->strength += pc->race.racial_modifier_array[STR];
+    pc->dexterity += pc->race.racial_modifier_array[DEX];
+    pc->constitution += pc->race.racial_modifier_array[CON];
+    pc->intelligence += pc->race.racial_modifier_array[INT];
+    pc->wisdom += pc->race.racial_modifier_array[WIS];
+    pc->charisma += pc->race.racial_modifier_array[CHA];
 }
 
 int find_min_index(int array[4]) {

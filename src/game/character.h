@@ -3,6 +3,14 @@
 
 #include "rpg.h"
 
+// ability score define constants (array indexing)
+#define STR 0
+#define DEX 1
+#define CON 2
+#define INT 3
+#define WIS 4
+#define CHA 5
+
 // class name lookup table
 static char *class_lookup[4] = { "WARRIOR", "WIZARD", "ROGUE", "RANGER" };
 
@@ -32,13 +40,14 @@ typedef enum _character_race_id {
 typedef struct character_class {
     character_class_id id;
     char class_name[100];
-    char class_description[MAX_SIZE];
+    char class_description[MAX_SIZE]; // probably don't need this
 } character_class;
 
 typedef struct character_race {
     character_race_id id;
     char race_name[100];
-    char race_description[MAX_SIZE];
+    char race_description[MAX_SIZE]; // probably don't need this, read from file
+    int racial_modifier_array[6];
 } character_race;
 
 // TODO: create xp roadmap
@@ -64,6 +73,7 @@ typedef struct _character {
     int max_magic;
     int current_magic;
 
+    // could refactor these into ability score & mod arrays
     int strength;
     int dexterity;
     int constitution;
@@ -87,11 +97,17 @@ static inline void init_character(character *c) {
 }
 
 void select_pc_race(character *pc, int race_option);
+void calculate_racial_mods(character *pc);
+void reset_racial_mods(character *pc);
+void remove_current_racial_mods(character *pc);
 void reset_pc_ability_scores(character *pc);
 void select_pc_class(character *pc, int class_option);
 void calculate_character_attributes(character *pc);
 void roll_ability_score(int ability_score_rolls[6][4], int roll_num);
+void init_ability_scores(character *pc);
 void calculate_ability_scores_and_mods(character *pc, int ability_score_rolls[6][4]);
+void calculate_mods(character *pc);
+void add_racial_mods(character *pc);
 int find_min_index(int array[4]);
 int find_modifier(int value);
 
