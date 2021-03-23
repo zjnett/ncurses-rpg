@@ -20,5 +20,6 @@ static inline void init_window_info() {
 }
 
 void window_print_centered_string(WINDOW *w, window_info wi, char *str);
+void warning_popup_window(window_info *wi, char *warning_str);
 
 #endif

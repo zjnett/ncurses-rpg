@@ -48,6 +48,7 @@ int do_game_loop(window_info *wi)
             //mvaddstr(wi->center_rows, wi->center_cols - buf_len, buffer);
             init_character_creation_options();
             character_creation_loop(wi);
+            mode = MAIN_MENU;
             break;
 
         case MENU:
@@ -76,9 +77,14 @@ void character_creation_loop(window_info *wi) {
     int input = 0;
     character new_player_character;
     init_character(&new_player_character);
+    init_verification_options();
 
     select_pc_race(&new_player_character, HUMAN);
     select_pc_class(&new_player_character, WARRIOR);
+
+    // race and class are technically already verified
+    // however, the player is free to change the options
+    verify_options(2, 1, 2); // verify 2 options, indices 1 and 2
 
     init_ability_scores(&new_player_character);
     calculate_mods(&new_player_character);
@@ -110,9 +116,19 @@ void character_creation_loop(window_info *wi) {
                 get_character_attribute(&new_player_character, selected_field);
                 wclear(stdscr); // only clear on 'enter' to prevent box 'flickering'
                 break;
+            case CTRL('d'):
+                character_creation_completed = validate_character_creation_completion();
+                if (!character_creation_completed) {
+                    // print some message here about how character isn't complete yet
+                    warning_popup_window(wi, "You have not finished making your character yet!");
+                }
         }
 
     } while(!character_creation_completed);
+
+    // do character saving here
+
+    clear();
 }
 
 void gameplay_render_loop() {

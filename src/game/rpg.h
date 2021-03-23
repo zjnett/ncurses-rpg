@@ -16,6 +16,12 @@
 
 #define MAX_SIZE 1000
 
+// Credit to user3224237, StackOverflow
+// https://stackoverflow.com/questions/9750588/how-to-get-ctrl-shift-or-alt-with-getch-ncurses/32794353
+#ifndef CTRL
+#define CTRL(c) ((c) & 037)
+#endif
+
 typedef enum game_mode {
     MAIN_MENU,
     GAMEPLAY,

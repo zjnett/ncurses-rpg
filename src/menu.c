@@ -6,12 +6,29 @@ extern int num_main_menu_options;
 menu_option character_creation_options[100];
 int num_cc_options;
 
+int character_creation_verification[100];
+
 void init_main_menu_options(void (*ptr[])())
 {
     create_menu_option(&menu_options[0], "New Game", ptr[0], 0);
     create_menu_option(&menu_options[1], "Load Game", ptr[1], 0);
     create_menu_option(&menu_options[2], "Quit", ptr[2], 0);
     num_main_menu_options = 3;
+}
+
+void init_verification_options(void) {
+    for (int i = 0; i < num_cc_options; i++) {
+        character_creation_verification[i] = 0;
+    }
+}
+
+void verify_options(int num, ...) {
+    va_list args;
+    va_start(args, num);
+    for (int i = 0; i < num; i++) {
+        character_creation_verification[va_arg(args, int)] = 1;
+    }
+    va_end(args);
 }
 
 void create_menu_option(menu_option *m, char *name, void *ptr, int is_selected)
@@ -140,6 +157,10 @@ void render_character_creation_menu(window_info *wi, int selected_option, charac
 
     y += vertical_padding;
 
+    attron(A_BOLD);
+    mvaddstr(y++, x, "Ability Scores:");
+    attroff(A_BOLD);
+
     // TODO: possible refactor, abs only needed because of ternary operator - printing (no 'empty' character)
     mvprintw(y++, x, "STR: %d (%c%d)", pc->strength, pc->str_mod >= 0 ? '+' : '-', abs(pc->str_mod));
     mvprintw(y++, x, "DEX: %d (%c%d)", pc->dexterity, pc->dex_mod >= 0 ? '+' : '-', abs(pc->dex_mod));
@@ -148,6 +169,15 @@ void render_character_creation_menu(window_info *wi, int selected_option, charac
     mvprintw(y++, x, "WIS: %d (%c%d)", pc->wisdom, pc->wis_mod >= 0 ? '+' : '-', abs(pc->wis_mod));
     mvprintw(y++, x, "CHA: %d (%c%d)", pc->charisma, pc->cha_mod >= 0 ? '+' : '-', abs(pc->cha_mod));
 
+    // always print commands in bold color, right at the bottom
+
+    // the random colors are kind of tacky, so i might get rid of them
+    // (i also like them, though)
+    attron(A_BOLD);
+    attron(COLOR_PAIR(rand() % 6 + 1));
+    mvaddstr(wi->max_rows - 3, x, "ARROW KEYS + ENTER to SELECT | CTRL+H for HELP | CTRL+D to FINISH");
+    attroff(A_BOLD);
+    attroff(COLOR_PAIR(rand() % 6 + 1));
 }
 
 void prep_formatted_attribute(int id, character *pc, char *dest) {
@@ -236,13 +266,17 @@ int find_selected_cc_option(void) {
 void get_character_attribute(character *pc, int selected_option) {
     if (!strncmp(character_creation_options[selected_option].name, "Name", 4)) {
         gets_window(&wi, "name", pc->name);
+        character_creation_verification[0] = 1;
     } else if (!strncmp(character_creation_options[selected_option].name, "Race", 4)) {
         race_selection_window(&wi, pc);
+        character_creation_verification[1] = 1;
     } else if (!strncmp(character_creation_options[selected_option].name, "Class", 5)) {
         class_selection_window(&wi, pc);
+        character_creation_verification[2] = 1;
     } else if (!strncmp(character_creation_options[selected_option].name, "Roll", 4)) {
         // ability score rolling
         ability_score_roll_window(&wi, pc);
+        character_creation_verification[3] = 1;
     }
 }
 
@@ -499,3 +533,11 @@ void roll_ability_score_window(window_info *wi, int ability_score_rolls[6][4]) {
     wclear(p);
 }
 
+int validate_character_creation_completion(void) {
+    for (int i = 0; i < num_cc_options; i++) {
+        if (character_creation_verification[i] == 0) {
+            return 0;
+        }
+    }
+    return 1;
+}

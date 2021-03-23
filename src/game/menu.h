@@ -16,6 +16,10 @@ typedef struct _menu_option {
 
 void init_main_menu_options(void (*ptr[])());
 
+void init_verification_options(void);
+
+void verify_options(int num, ...);
+
 void create_menu_option(menu_option *m, char *name, void *ptr, int is_selected);
 
 void select_menu_option(int num);
@@ -47,6 +51,8 @@ void class_selection_window(window_info *wi, character *pc);
 void ability_score_roll_window(window_info *wi, character *pc);
 
 void roll_ability_score_window(window_info *wi, int ability_score_rolls[6][4]);
+
+int validate_character_creation_completion(void);
 
 // global menu options array
 extern enum game_mode mode;

@@ -58,7 +58,6 @@ void select_pc_class(character *pc, int class_option) {
     strcpy(pc->class.class_name, class_lookup[class_option]);
 }
 
-// TODO: make mods instead of raw scores
 void calculate_character_attributes(character *pc) {
     pc->max_hp = 10 + (abs(pc->constitution)*5);
     pc->max_stamina = 10 + (abs(pc->dexterity)*5);
