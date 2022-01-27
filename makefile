@@ -1,7 +1,7 @@
 CC=gcc
 OUT=rpg
 SRC=$(wildcard src/*.c)
-LDFLAGS=-lcurses -lpanel -lSDL2 -lSDL2_mixer
+LDFLAGS=-lcurses -lpanel -lSDL2 -lSDL2_mixer -lm
 
 all: bin ncurses-rpg
 
