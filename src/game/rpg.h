@@ -7,6 +7,7 @@
 #include <string.h>
 #include <time.h>
 #include <signal.h>
+#include <assert.h>
 #include <locale.h>
 #include <wchar.h>
 #include <panel.h>

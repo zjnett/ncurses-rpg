@@ -13,7 +13,7 @@ extern character *player_character;
 
 void **global_data;
 
-const static uint16_t global_data_size = 1;
+const static size_t global_data_size = 1;
 
 // Initialize global data array.
 void init_global_game_data(void)
@@ -23,12 +23,14 @@ void init_global_game_data(void)
     // initialize and malloc global data array members
     player_character = (character *) malloc (sizeof(character));
     global_data[0] = player_character;
+    // check that final global data array size is the same as we've declared
+    assert(global_data_size == (sizeof(global_data) / sizeof(global_data[0])));
 }
 
 // Free all global data pointers.
 void destroy_global_game_data(void)
 {
-    for (int i = 0; i < global_data_size; i++)
+    for (size_t i = 0; i < global_data_size; i++)
     {
         free(global_data[i]);
     }
