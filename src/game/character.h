@@ -110,5 +110,8 @@ void calculate_mods(character *pc);
 void add_racial_mods(character *pc);
 int find_min_index(int array[4]);
 int find_modifier(int value);
+void copy_player_character(character *pc);
+
+character *player_character;
 
 #endif

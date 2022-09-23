@@ -194,3 +194,7 @@ int find_modifier(int value) {
     }
     return 0;
 }
+
+void copy_player_character(character *pc) {
+    memcpy(player_character, pc, sizeof(character));
+}

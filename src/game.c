@@ -127,6 +127,7 @@ void character_creation_loop(window_info *wi) {
     } while(!character_creation_completed);
 
     // do character saving here
+    copy_player_character(&new_player_character);
 
     clear();
 }
