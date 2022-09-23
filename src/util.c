@@ -13,8 +13,7 @@ extern character *player_character;
 
 void **global_data;
 
-static uint16_t global_data_size = 1;
-
+const static uint16_t global_data_size = 1;
 
 // Initialize global data array.
 void init_global_game_data(void)

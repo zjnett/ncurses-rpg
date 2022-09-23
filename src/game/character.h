@@ -12,16 +12,16 @@
 #define CHA 5
 
 // class name lookup table
-static char *class_lookup[4] = { "WARRIOR", "WIZARD", "ROGUE", "RANGER" };
+const static char *class_lookup[4] = { "WARRIOR", "WIZARD", "ROGUE", "RANGER" };
 
 // race name lookup table
-static char *race_lookup[4] = { "HUMAN", "ELF", "DWARF", "DEVIL" };
+const static char *race_lookup[4] = { "HUMAN", "ELF", "DWARF", "DEVIL" };
 
-static char *race_bonuses[4] = { "+2 CON, +1 WIS", "+2 DEX, +1 INT", "+2 STR, +1 CON", "+2 CHA, +1 DEX" };
+const static char *race_bonuses[4] = { "+2 CON, +1 WIS", "+2 DEX, +1 INT", "+2 STR, +1 CON", "+2 CHA, +1 DEX" };
 
-static int num_races = 4;
+const static int num_races = 4;
 
-static int num_classes = 4;
+const static int num_classes = 4;
 
 typedef enum _character_class_id {
     WARRIOR,
