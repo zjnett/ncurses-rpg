@@ -44,11 +44,15 @@ int do_game_loop(window_info *wi)
 
         case GAMEPLAY:
             // render gameplay
-            //update_buffer(buffer, "Gameplay!", &buf_len);
-            //mvaddstr(wi->center_rows, wi->center_cols - buf_len, buffer);
+            update_buffer(buffer, "Gameplay!", &buf_len);
+            mvaddstr(wi->center_rows, wi->center_cols - buf_len, buffer);
+            break;
+
+        case CHARACTER_CREATION:
             init_character_creation_options();
             character_creation_loop(wi);
-            mode = MAIN_MENU;
+            change_mode(GAMEPLAY);
+            refresh();
             break;
 
         case MENU:
@@ -70,6 +74,12 @@ int do_game_loop(window_info *wi)
 
     endwin();
     return EXIT_SUCCESS;
+}
+
+// TODO: possible refactor this to be somewhere else
+void change_mode(game_mode m)
+{
+    mode = m;
 }
 
 void character_creation_loop(window_info *wi) {
@@ -151,14 +161,14 @@ int update_buffer(char *buffer, char *src, int *buffer_length)
 
 void exec_new_game()
 {
-    mode = GAMEPLAY;
+    change_mode(CHARACTER_CREATION);
 }
 
 void exec_load_game()
 {
-    mode = MENU;
+    change_mode(MENU);
 }
 
 void exec_exit() {
-    mode = EXIT;
+    change_mode(EXIT);
 }

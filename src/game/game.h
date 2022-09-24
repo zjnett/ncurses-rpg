@@ -7,6 +7,7 @@
 #include "character.h"
 
 int do_game_loop(window_info *wi);
+void change_mode(game_mode m);
 int update_buffer(char *buffer, char *src, int *buffer_length);
 void character_creation_loop(window_info *wi);
 void exec_new_game(void);

@@ -25,6 +25,7 @@
 
 typedef enum game_mode {
     MAIN_MENU,
+    CHARACTER_CREATION,
     GAMEPLAY,
     MENU,
     EXIT

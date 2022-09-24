@@ -24,7 +24,7 @@ int main(int argc, char *argv[])
     // initialize window info
     init_window_info();
 
-    mode = MAIN_MENU;
+    change_mode(MAIN_MENU);
 
     int exit_condition = do_game_loop(&wi);
 
