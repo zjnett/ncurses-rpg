@@ -35,3 +35,26 @@ void destroy_global_game_data(void)
         free(global_data[i]);
     }
 }
+
+// Initial calls to setup ncurses
+void init_ncurses(void)
+{
+    initscr();
+    cbreak();
+    noecho();
+    curs_set(0);
+    keypad(stdscr, true);
+}
+
+// Enable color and set ncurses color pairs
+void init_game_color(void)
+{
+    start_color();
+    init_pair(1, COLOR_BLUE, COLOR_BLACK);
+    init_pair(2, COLOR_GREEN, COLOR_BLACK);
+    init_pair(3, COLOR_CYAN, COLOR_BLACK);
+    init_pair(4, COLOR_RED, COLOR_BLACK);
+    init_pair(5, COLOR_MAGENTA, COLOR_BLACK);
+    init_pair(6, COLOR_YELLOW, COLOR_BLACK);
+    init_pair(7, COLOR_WHITE, COLOR_BLACK);
+}
