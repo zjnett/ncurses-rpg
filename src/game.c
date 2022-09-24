@@ -23,6 +23,7 @@ int do_game_loop(window_info *wi)
     char buffer[MAX_SIZE] = {'\0'};
     int buf_len = 0;
     int selected_option = 0;
+    bool skip_input = false;
 
     // function pointers
     void (*func_ptr_array[3])() = {exec_new_game, exec_load_game, exec_exit };
@@ -52,7 +53,7 @@ int do_game_loop(window_info *wi)
             init_character_creation_options();
             character_creation_loop(wi);
             change_mode(GAMEPLAY);
-            refresh();
+            skip_input = true;
             break;
 
         case MENU:
@@ -66,9 +67,16 @@ int do_game_loop(window_info *wi)
             break;
         }
 
-        input = wgetch(stdscr);
+        if (skip_input == false)
+        {
+            input = wgetch(stdscr);
 
-        process_menu_input(input, &selected_option);
+            process_menu_input(input, &selected_option);
+        }
+        else
+        {
+            skip_input = false;
+        }
 
     } while (input != 'q' && mode != EXIT);
 
