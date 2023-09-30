@@ -12,12 +12,12 @@
 #define CHA 5
 
 // class name lookup table
-const static char *class_lookup[4] = { "WARRIOR", "WIZARD", "ROGUE", "RANGER" };
+const static char * const class_lookup[4] = { "WARRIOR", "WIZARD", "ROGUE", "RANGER" };
 
 // race name lookup table
-const static char *race_lookup[4] = { "HUMAN", "ELF", "DWARF", "DEVIL" };
+const static char * const race_lookup[4] = { "HUMAN", "ELF", "DWARF", "DEVIL" };
 
-const static char *race_bonuses[4] = { "+2 CON, +1 WIS", "+2 DEX, +1 INT", "+2 STR, +1 CON", "+2 CHA, +1 DEX" };
+const static char * const race_bonuses[4] = { "+2 CON, +1 WIS", "+2 DEX, +1 INT", "+2 STR, +1 CON", "+2 CHA, +1 DEX" };
 
 const static int num_races = 4;
 
@@ -97,17 +97,11 @@ static inline void init_character(character *c) {
 }
 
 void select_pc_race(character *pc, int race_option);
-void calculate_racial_mods(character *pc);
-void reset_racial_mods(character *pc);
-void remove_current_racial_mods(character *pc);
-void reset_pc_ability_scores(character *pc);
 void select_pc_class(character *pc, int class_option);
-void calculate_character_attributes(character *pc);
 void roll_ability_score(int ability_score_rolls[6][4], int roll_num);
 void init_ability_scores(character *pc);
 void calculate_ability_scores_and_mods(character *pc, int ability_score_rolls[6][4]);
 void calculate_mods(character *pc);
-void add_racial_mods(character *pc);
 int find_min_index(int array[4]);
 int find_modifier(int value);
 void copy_player_character(character *pc);
