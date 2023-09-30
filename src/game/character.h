@@ -4,12 +4,14 @@
 #include "rpg.h"
 
 // ability score define constants (array indexing)
-#define STR 0
-#define DEX 1
-#define CON 2
-#define INT 3
-#define WIS 4
-#define CHA 5
+typedef enum _ability_score {
+    STR = 0,
+    DEX = 1,
+    CON = 2,
+    INT = 3,
+    WIS = 4,
+    CHA = 5
+} ability_score;
 
 // class name lookup table
 const static char * const class_lookup[4] = { "WARRIOR", "WIZARD", "ROGUE", "RANGER" };
